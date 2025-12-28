@@ -15,11 +15,15 @@ export default function PotentialPortfolio({ isOpen, onClose }) {
     try {
       const response = await axios.get(`${API_URL}/watchlist`);
       if (response.data.success) {
-        setEntries(response.data.entries);
+        setEntries(response.data.entries || []);
       }
     } catch (error) {
       console.error('Fetch watchlist error:', error);
-      toast.error('Eroare la încărcarea watchlist-ului');
+      // Don't show error toast for empty watchlist
+      if (error.response?.status !== 404) {
+        toast.error('Eroare la încărcarea watchlist-ului');
+      }
+      setEntries([]);
     } finally {
       setLoading(false);
     }
