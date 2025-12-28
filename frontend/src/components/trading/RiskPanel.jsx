@@ -102,44 +102,36 @@ export default function RiskPanel({ riskData, analysis, onOptimizeComplete, onAl
           )}
         </div>
 
-        {/* Action Buttons */}
-        <div className="grid grid-cols-2 gap-2">
+        {/* Action Buttons - NEW DESIGN with Neon Colors */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
           <button
-            onClick={handleOptimizeEntry}
-            disabled={isOptimizing || !analysis}
-            className="console-btn flex items-center justify-center gap-2 py-2"
+            onClick={() => setIsOptimizeModalOpen(true)}
+            disabled={!analysis}
+            className="group relative overflow-hidden rounded-lg p-4 border border-indigo-500/30 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 hover:from-indigo-500/20 hover:to-purple-500/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             title="Optimizează Entry pentru R/R >= 2.0"
           >
-            {isOptimizing ? (
-              <>
-                <div className="h-3 w-3 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                Optimizează...
-              </>
-            ) : (
-              <>
-                <Target className="h-4 w-4" />
-                🎯 Optimize Entry
-              </>
-            )}
+            <div className="flex flex-col items-center gap-2">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Target className="h-5 w-5 text-white" />
+              </div>
+              <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">Optimize Entry</span>
+              <span className="text-[10px] text-muted-foreground text-center">Găsește cel mai bun preț</span>
+            </div>
           </button>
           
           <button
-            onClick={handleSimulateTrade}
-            disabled={isSimulating || !analysis}
-            className="console-btn flex items-center justify-center gap-2 py-2"
+            onClick={() => setIsSimulateModalOpen(true)}
+            disabled={!analysis}
+            className="group relative overflow-hidden rounded-lg p-4 border border-violet-500/30 bg-gradient-to-br from-violet-500/10 to-emerald-500/10 hover:from-violet-500/20 hover:to-emerald-500/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             title="Simulează tranzacția (Paper Trading)"
           >
-            {isSimulating ? (
-              <>
-                <div className="h-3 w-3 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                Simulează...
-              </>
-            ) : (
-              <>
-                <Beaker className="h-4 w-4" />
-                🧪 Simulate Trade
-              </>
-            )}
+            <div className="flex flex-col items-center gap-2">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Beaker className="h-5 w-5 text-white" />
+              </div>
+              <span className="text-xs font-bold uppercase tracking-wider text-violet-400">Simulate Trade</span>
+              <span className="text-[10px] text-muted-foreground text-center">Testează fără risc</span>
+            </div>
           </button>
         </div>
 
