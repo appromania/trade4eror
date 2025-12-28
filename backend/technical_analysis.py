@@ -652,6 +652,44 @@ class TechnicalAnalyzer:
         else:
             signal = "WAIT"
         
+        # ===== SUPREME RISK MANAGEMENT FILTER (R/R < 1.5) =====
+        # This is the FINAL override - happens AFTER all other logic
+        if rr_ratio < 1.5:
+            # Decide between WAIT (Yellow) and HOLD (Gray)
+            trend_direction = indicators['trend']['direction']
+            
+            if trend_direction == 'BULLISH' and regime == 'TRENDING':
+                # Trend is good but entry is bad - WAIT for pullback
+                signal = 'WAIT'
+                override_msg = f'⏸ WAIT: Trendul este bun, dar R/R este {rr_ratio:.2f} (sub 1.5). Așteptați un pullback pentru intrare mai bună la suport ${support:.2f}.'
+                warnings.insert(0, override_msg)
+                result = {
+                    'signal': signal,
+                    'confidence': max(20, min(confidence, 45)),  # Cap confidence at 45% for WAIT
+                    'reasons': ['Trend bullish valid'] + reasons,
+                    'warnings': warnings,
+                    'override_reason': f'R/R Filter: {rr_ratio:.2f} < 1.5 - Setup nefavorabil'
+                }
+            else:
+                # Market is ranging/bearish or uncertain - HOLD (do nothing)
+                signal = 'HOLD'
+                override_msg = f'↔ HOLD: Piață laterală sau trend incert + R/R {rr_ratio:.2f} (sub 1.5). Nu există oportunitate clară.'
+                warnings.insert(0, override_msg)
+                result = {
+                    'signal': signal,
+                    'confidence': max(15, min(confidence, 40)),  # Cap confidence at 40% for HOLD
+                    'reasons': reasons,
+                    'warnings': warnings,
+                    'override_reason': f'R/R Filter: {rr_ratio:.2f} < 1.5 - Lipsă oportunitate'
+                }
+            
+            # Add advanced alerts if any
+            if advanced_alerts:
+                result['advanced_alerts'] = advanced_alerts
+            
+            return result
+        
+        # If R/R >= 1.5, proceed with normal signal
         result = {
             'signal': signal,
             'confidence': int(confidence),
