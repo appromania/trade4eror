@@ -39,83 +39,10 @@ export default function RiskPanel({ riskData, analysis, onOptimizeComplete, onAl
     }
   };
 
-  // Optimize entry for better R/R
-  const handleOptimizeEntry = async () => {
-    if (!analysis?.indicators) return;
-    
-    setIsOptimizing(true);
-    try {
-      const response = await axios.post(`${API_URL}/optimize-entry`, {
-        symbol: analysis.symbol,
-        current_price: analysis.current_price,
-        ema_20: analysis.indicators.price.ema_20,
-        ema_50: analysis.indicators.price.ema_50,
-        support: riskData.support,
-        resistance: riskData.resistance,
-        atr: riskData.atr_value,
-        current_rr: riskData.risk_reward_ratio
-      });
-      
-      if (response.data.success) {
-        const opt = response.data.optimization;
-        toast.success(opt.message || 'Entry optimizat!', {
-          description: opt.action,
-          duration: 5000
-        });
-        if (onOptimizeComplete) onOptimizeComplete(opt);
-      }
-    } catch (error) {
-      console.error('Optimize entry error:', error);
-      toast.error('Eroare la optimizarea entry-ului');
-    } finally {
-      setIsOptimizing(false);
-    }
-  };
-
-  // Simulate trade (paper trading)
-  const handleSimulateTrade = async () => {
-    setIsSimulating(true);
-    try {
-      const response = await axios.post(`${API_URL}/simulate-trade`, {
-        symbol: analysis.symbol,
-        entry_price: riskData.entry_price,
-        stop_loss: riskData.stop_loss,
-        take_profit: riskData.take_profit,
-        position_size: 100,
-        strategy: 'manual',
-        notes: `Simulare pentru ${analysis.symbol} - R/R ${riskData.risk_reward_ratio}:1`
-      });
-      
-      if (response.data.success) {
-        toast.success('Tranzacție simulată creată!', {
-          description: `${analysis.symbol} adăugat în Strategy Tester`,
-          duration: 5000
-        });
-        
-        // Also add to watchlist
-        await axios.post(`${API_URL}/watchlist/add`, {
-          symbol: analysis.symbol,
-          ideal_entry_price: riskData.entry_price,
-          current_price: analysis.current_price,
-          stop_loss: riskData.stop_loss,
-          take_profit: riskData.take_profit,
-          confidence_score: analysis.confidence_score,
-          notes: 'Adăugat automat din simulare'
-        });
-        
-        if (onSimulationCreated) onSimulationCreated(response.data.trade);
-      }
-    } catch (error) {
-      console.error('Simulate trade error:', error);
-      toast.error('Eroare la crearea simulării');
-    } finally {
-      setIsSimulating(false);
-    }
-  };
-
   return (
-    <div className="terminal-card p-4" data-testid="risk-panel">
-      <h3 className="indicator-label mb-4">Risk Management</h3>
+    <>
+      <div className="terminal-card p-4" data-testid="risk-panel">
+        <h3 className="indicator-label mb-4">Risk Management</h3>
       
       <div className="space-y-4">
         {/* Entry & Exit with Alert Buttons */}
