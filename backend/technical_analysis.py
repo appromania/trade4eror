@@ -359,9 +359,9 @@ class TechnicalAnalyzer:
                     'signal': 'supracumpărat' if rsi.iloc[-1] > 70 else 'supravândut' if rsi.iloc[-1] < 30 else 'neutru'
                 },
                 'stoch_rsi': {
-                    'k': round(float(stoch_rsi['k'].iloc[-1]), 2),
-                    'd': round(float(stoch_rsi['d'].iloc[-1]), 2),
-                    'signal': 'supracumpărat' if stoch_rsi['k'].iloc[-1] > 80 else 'supravândut' if stoch_rsi['k'].iloc[-1] < 20 else 'neutru'
+                    'k': round(float(stoch_rsi['k'].iloc[-1]), 2) if not pd.isna(stoch_rsi['k'].iloc[-1]) else 50.0,
+                    'd': round(float(stoch_rsi['d'].iloc[-1]), 2) if not pd.isna(stoch_rsi['d'].iloc[-1]) else 50.0,
+                    'signal': 'supracumpărat' if (not pd.isna(stoch_rsi['k'].iloc[-1]) and stoch_rsi['k'].iloc[-1] > 80) else 'supravândut' if (not pd.isna(stoch_rsi['k'].iloc[-1]) and stoch_rsi['k'].iloc[-1] < 20) else 'neutru'
                 },
                 'adx': {
                     'value': round(float(adx_data['adx'].iloc[-1]), 2),
