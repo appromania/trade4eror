@@ -666,6 +666,9 @@ async def simulate_trade(request: SimulateTradeRequest):
         
         await db.simulated_trades.insert_one(trade)
         
+        # Remove MongoDB's _id before returning (not JSON serializable)
+        trade.pop('_id', None)
+        
         return {
             'success': True,
             'trade_id': trade_id,
