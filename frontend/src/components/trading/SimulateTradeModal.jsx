@@ -71,7 +71,11 @@ export default function SimulateTradeModal({ isOpen, onClose, analysis, riskData
       }
     } catch (error) {
       console.error('Simulate trade error:', error);
-      toast.error('Eroare la crearea simulării');
+      const errorMsg = error.response?.data?.detail || error.message || 'Eroare necunoscută';
+      toast.error('Eroare la crearea simulării', {
+        description: errorMsg,
+        duration: 5000
+      });
     } finally {
       setIsSubmitting(false);
     }
