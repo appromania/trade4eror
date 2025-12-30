@@ -30,56 +30,6 @@ export default function SimulateTradeModal({ isOpen, onClose, analysis, riskData
   const profitAmount = (customTP - entryPrice) * positionSize;
   const lossAmount = (customSL - entryPrice) * positionSize;
   const profitPercent = ((customTP - entryPrice) / entryPrice) * 100;
-  const lossPercent = ((customSL - entryPrice) / entryPrice) * 100;
-
-  // Calculate R/R
-  const risk = entryPrice - customSL;
-  const reward = customTP - entryPrice;
-  const rrRatio = risk > 0 ? (reward / risk).toFixed(2) : 0;
-
-  const handleSimulate = async () => {
-    setIsSubmitting(true);
-    try {
-      const response = await axios.post(`${API_URL}/simulate-trade`, {
-        symbol: analysis.symbol,
-        entry_price: entryPrice,
-        stop_loss: customSL,
-        take_profit: customTP,
-        position_size: positionSize,
-        strategy: 'manual',
-        notes: `Simulare cu capital $${capital} - R/R ${rrRatio}:1`
-      });
-
-      if (response.data.success) {
-        toast.success('Tranzacție simulată creată!', {
-          description: `${analysis.symbol} adăugat în Strategy Tester`,
-          duration: 5000
-        });
-
-        // Also add to watchlist
-        await axios.post(`${API_URL}/watchlist/add`, {
-          symbol: analysis.symbol,
-          ideal_entry_price: entryPrice,
-          current_price: analysis.current_price,
-          stop_loss: customSL,
-          take_profit: customTP,
-          confidence_score: analysis.confidence_score,
-          notes: `Simulare - Capital: $${capital}`
-        });
-
-        onClose();
-      }
-    } catch (error) {
-      console.error('Simulate trade error:', error);
-      const errorMsg = error.response?.data?.detail || error.message || 'Eroare necunoscută';
-      toast.error('Eroare la crearea simulării', {
-        description: errorMsg,
-        duration: 5000
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
